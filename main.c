@@ -2,16 +2,24 @@
 #include <objc/message.h>
 #include <CoreGraphics/CoreGraphics.h>
 
-#define Borderless               0
-#define Titled                   1 << 0
-#define Closable                 1 << 1
-#define Miniaturizable           1 << 2
-#define Resizable                1 << 3
-#define TexturedBackground       1 << 8
-#define UnifiedTitleAndToolbar   1 << 12
-#define FullScreen               1 << 14
-#define FullSizeContentView      1 << 15
-#define NSBackingStoreRetained   0
+// Copied from <AppKit/NSWindow.h>
+enum {
+    NSBorderlessWindowMask = 0,
+    NSTitledWindowMask = 1 << 0,
+    NSClosableWindowMask = 1 << 1,
+    NSMiniaturizableWindowMask = 1 << 2,
+    NSResizableWindowMask	= 1 << 3,
+    NSTexturedBackgroundWindowMask = 1 << 8,
+    NSUnifiedTitleAndToolbarWindowMask = 1 << 12,
+    NSFullScreenWindowMask = 1 << 14,
+    NSFullSizeContentViewWindowMask = 1 << 15
+};
+// Copied from <AppKit/NSGraphics.h>
+typedef CF_ENUM(unsigned long, NSBackingStoreType) {
+    NSBackingStoreRetained = 0,
+    NSBackingStoreNonretained = 1,
+    NSBackingStoreBuffered = 2
+};
 
 #define sendNoArgs(i, f) objc_msgSend(i, sel_registerName(f))
 #define send(i, f, ...) objc_msgSend(i, sel_registerName(f), __VA_ARGS__)
@@ -25,7 +33,6 @@
     class_addMethod(c, sel_registerName(m), __VA_ARGS__)
 #define allocateClassPair(s, n, e)\
     objc_allocateClassPair((Class)objc_getClass(s), n, e)
-#define C(z) CFSTR(z)
 
 extern id NSApp;
 
@@ -39,7 +46,8 @@ typedef struct {
 bool didFinishLaunching(AppDelegateStruct *self, SEL _cmd, id notification) {
     self->window = sendClassNoArgs("NSWindow", "alloc");
     CGRect windowRect = {0, 0, 640, 480}, viewRect = {0, 0, 320, 240};
-    int windowStyle = Titled | Closable | Resizable | Miniaturizable;
+    int windowStyle = NSTitledWindowMask | NSClosableWindowMask |
+            NSResizableWindowMask | NSMiniaturizableWindowMask;
     self->window = send(self->window,
                      "initWithContentRect:styleMask:backing:defer:",
                      windowRect, windowStyle, NSBackingStoreRetained, NO);
@@ -47,9 +55,6 @@ bool didFinishLaunching(AppDelegateStruct *self, SEL _cmd, id notification) {
     send(self->window, "setContentView:", view);
     sendNoArgs(self->window, "becomeFirstResponder");
     send(self->window, "makeKeyAndOrderFront:", self);
-
-    NSRunAlertPanel(C("Testing"), C("Hello, world!"), C("OK"), NULL, NULL);
-
     return YES;
 }
 
