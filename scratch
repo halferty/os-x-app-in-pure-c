@@ -1,0 +1,39 @@
+.PHONY: compile
+
+compile: main.c; gcc -o minimalist main.m -lobjc -framework AppKit
+
+run: compile ; ./minimalist
+
+
+
+
+.PHONY: default
+
+default: compile ;
+
+compile: test1.cpp; g++ -framework Cocoa -o test1 test1.cpp;
+
+
+
+#include <objc/objc.h>
+// #include <objc/runtime.h>
+
+#import <CoreGraphics/CoreGraphics.h>
+#include <objc/message.h>
+
+extern int NSRunAlertPanel(CFStringRef strTitle, CFStringRef strMsg, CFStringRef strButton1, CFStringRef strButton2, CFStringRef strButton3, ...);
+
+int main(int argc, char** argv)
+{
+    id app = NULL;
+    id pool = (id)objc_getClass("NSAutoreleasePool");
+    pool = (id)objc_msgSend(pool, sel_registerName("alloc"));
+    pool = (id)objc_msgSend(pool, sel_registerName("init"));
+//    app = (id)objc_msgSend((id)objc_getClass("NSApplication"), sel_registerName("sharedApplication"));
+    NSRunAlertPanel(CFSTR("Testing"), CFSTR("This is a simple test to display NSAlertPanel."), CFSTR("OK"), NULL, NULL);
+//    objc_msgSend(pool, sel_registerName("release"));
+    return 0;
+}
+
+
+
