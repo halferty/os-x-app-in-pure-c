@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/ehalferty/CLionProjects/uml_viewer_01/main.c
+objc/runtime.h
+-
+objc/message.h
+-
+CoreGraphics/CoreGraphics.h
+-
+
