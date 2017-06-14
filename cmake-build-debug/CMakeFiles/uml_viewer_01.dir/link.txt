@@ -1,1 +1,0 @@
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc  -g -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -lobjc -framework AppKit -framework Cocoa CMakeFiles/uml_viewer_01.dir/main.c.o  -o uml_viewer_01 
