@@ -72,10 +72,15 @@ bool didFinishLaunching(AppDelegateStruct *self, SEL _cmd, id notification) {
     return YES;
 }
 
+bool shouldTerminateAfterLastWindowClosed(AppDelegateStruct *self, SEL _cmd, id notification) {
+    return YES;
+}
+
 int main(int argc, char **argv) {
     const char *appDelegateClassName = "AppDelegate";
     Class AppDelegateClass = allocateClassPairNoExtra("NSObject", appDelegateClassName);
     addMethod(AppDelegateClass, "applicationDidFinishLaunching:", (IMP)didFinishLaunching, "i@:@");
+    addMethod(AppDelegateClass, "applicationShouldTerminateAfterLastWindowClosed:", (IMP)shouldTerminateAfterLastWindowClosed, "i@:@");
     objc_registerClassPair(AppDelegateClass);
     sendClassNoArgs("NSApplication", "sharedApplication");
     id appDelegate = initAlloc(appDelegateClassName);
@@ -83,3 +88,8 @@ int main(int argc, char **argv) {
     sendNoArgs(NSApp, "run");
     return EXIT_SUCCESS;
 }
+
+
+//- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication {
+//    return YES;
+//}
