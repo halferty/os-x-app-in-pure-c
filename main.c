@@ -14,26 +14,27 @@ typedef struct {
 NSOpenGLPixelFormatAttribute attrs[] = { NSOpenGLPFADoubleBuffer, 0 };
 
 void prepareOpenGL() {
-    printf("prepareOpenGL called\n");
+//    printf("prepareOpenGL called\n");
     glClearColor(0.7490196078431373f, 0.3568627450980392f, 0.3568627450980392f, 1.0f);
+//    glClearColor(0.7490196078431373f, 0.3568627450980392f, 0.3568627450980392f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glFlush();
     glSwapAPPLE();
 }
 
 void reshape() {
-    printf("reshape called\n");
-    glClearColor(0.7490196078431373f, 0.3568627450980392f, 0.3568627450980392f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glFlush();
+//    printf("reshape called\n");
+//    glClearColor(0.7490196078431373f, 0.3568627450980392f, 0.3568627450980392f, 1.0f);
+//    glClear(GL_COLOR_BUFFER_BIT);
+//    glFlush();
     glSwapAPPLE();
 }
 
 void drawRect(CGRect rect) {
-    printf("drawRect called\n");
-    glClearColor(0.7490196078431373f, 0.3568627450980392f, 0.3568627450980392f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glFlush();
+//    printf("drawRect called\n");
+//    glClearColor(0.7490196078431373f, 0.3568627450980392f, 0.3568627450980392f, 1.0f);
+//    glClear(GL_COLOR_BUFFER_BIT);
+//    glFlush();
     glSwapAPPLE();
 }
 
@@ -48,7 +49,7 @@ bool didFinishLaunching(AppDelegateStruct *self, SEL _cmd, id notification) {
     addMethod(ViewClass, "prepareOpenGL", (IMP)prepareOpenGL, "v@");
     addMethod(ViewClass, "reshape", (IMP)reshape, "v@");
     addMethod(ViewClass, "drawRect:", (IMP)drawRect, "v@:@");
-    printf("%p\n", (void *)ViewClass);
+//    printf("%p\n", (void *)ViewClass);
     objc_registerClassPair(ViewClass);
     id pixelFormat = send(alloc("NSOpenGLPixelFormat"), "initWithAttributes:", attrs);
     id context = send(alloc("NSOpenGLContext"), "initWithFormat:shareContext:", pixelFormat, (void *)0);
@@ -57,7 +58,17 @@ bool didFinishLaunching(AppDelegateStruct *self, SEL _cmd, id notification) {
     send(view, "setPixelFormat:", pixelFormat);
     send(view, "setOpenGLContext:", context);
     send(self->window, "setContentView:", view);
-    send(self->window, "makeKeyAndOrderFront:", self);
+//    send(NSApp, "activateIgnoringOtherApps", true);
+//    send(self->window, "makeKeyAndOrderFront:", self);
+    id window = send(sendNoArgs(NSApp, "windows"), "objectAtIndex:", 0);
+    send(window, "makeKeyAndOrderFront:", window);
+//    send(window, "activateIgnoringOtherApps:", true);
+//    id first = send(asdf, "objectAtIndex:", 0);
+//    id app = sendClassNoArgs("NSApplication", "sharedApplication");
+//    auto mainWindow = sendNoArgs(app, "mainWindow");
+//    int asdfdf = 23423;
+//    send(self->window, "makeKeyAndOrderFront:", self);
+//    send(self->window, "makeKeyAndOrderFront:", self->window);
     return YES;
 }
 
