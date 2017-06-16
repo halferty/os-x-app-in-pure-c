@@ -113,14 +113,19 @@ int main(int argc, char **argv) {
 //    id appName = [[NSProcessInfo processInfo] processName];
     id appName = sendNoArgs(sendClassNoArgs("NSProcessInfo", "processInfo"), "processName");
 //    id quitTitle = [@"Quit " stringByAppendingString:appName];
-    id quitTitle = send(makeNSString("Quit"), "stringByAppendingString:", appName);
+    id quitTitle = send(makeNSString("Quit "), "stringByAppendingString:", appName);
 //    id quitMenuItem = [[[NSMenuItem alloc] initWithTitle:quitTitle action:@selector(terminate:) keyEquivalent:@"q"] autorelease];
-    id quitMenuItem = autorelease(send(alloc("NSMenuItem"), "initWithTitle:action:keyEquivalent:", quitTitle, NULL, makeNSString("q")));
+    id quitMenuItem = autorelease(send(alloc("NSMenuItem"), "initWithTitle:action:keyEquivalent:", quitTitle, NSSelectorFromString(makeNSString("terminate:")), makeNSString("q")));
+    id menuTitle = makeNSString("Menu example");
+    id menuItem = autorelease(send(alloc("NSMenuItem"), "initWithTitle:action:keyEquivalent:", menuTitle, NULL, makeNSString("m")));
 //    [appMenu addItem:quitMenuItem];
+    send(quitMenuItem, "setEnabled:", true);
     send(appMenu, "addItem:", quitMenuItem);
+    send(menuItem, "setEnabled:", true);
+    send(appMenu, "addItem:", menuItem);
 //    [appMenuItem setSubmenu:appMenu];
     send(appMenuItem, "setSubmenu:", appMenu);
-
+    send(NSApp, "activateIgnoringOtherApps:", true);
     id appDelegate = initAlloc(appDelegateClassName);
     send(NSApp, "setDelegate:", appDelegate);
     sendNoArgs(NSApp, "run");

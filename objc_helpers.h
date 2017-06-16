@@ -47,6 +47,13 @@ typedef NS_ENUM(NSInteger, NSApplicationActivationPolicy) {
 };
 
 
+// Copied from <Foundation/NSObjCRuntime.h>
+#define FOUNDATION_EXTERN extern
+#define FOUNDATION_EXPORT  FOUNDATION_EXTERN
+typedef id NSString;
+//FOUNDATION_EXPORT SEL NSSelectorFromString(NSString *aSelectorName);
+FOUNDATION_EXPORT SEL NSSelectorFromString(id aSelectorName);
+
 // Common objc_msgSend call patterns
 #define sendNoArgs(i, f) objc_msgSend(i, sel_registerName(f))
 #define send(i, f, ...) objc_msgSend(i, sel_registerName(f), __VA_ARGS__)
@@ -73,5 +80,7 @@ typedef NS_ENUM(NSInteger, NSApplicationActivationPolicy) {
     sendNoArgs(i, "autorelease")
 #define autoreleaseNew(c)\
     autorelease(new(c))
+#define selector(s)\
+    sendClass("NSSelectorFromString")
 
 #endif //UML_VIEWER_01_OBJC_HELPERS_H
