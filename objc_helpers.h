@@ -5,6 +5,8 @@
 #ifndef UML_VIEWER_01_OBJC_HELPERS_H
 #define UML_VIEWER_01_OBJC_HELPERS_H
 
+#include <objc/NSObjCRuntime.h>
+
 
 // Copied from <AppKit/NSWindow.h>
 enum {
@@ -34,11 +36,22 @@ enum {
 };
 typedef uint32_t NSOpenGLPixelFormatAttribute;
 
+
+// Copied from <AppKit/NSRunningApplication.h>
+//typedef long NSInteger // Not actually c
+#define NS_ENUM(...) CF_ENUM(__VA_ARGS__)
+typedef NS_ENUM(NSInteger, NSApplicationActivationPolicy) {
+    NSApplicationActivationPolicyRegular,
+    NSApplicationActivationPolicyAccessory,
+    NSApplicationActivationPolicyProhibited
+};
+
+
 // Common objc_msgSend call patterns
 #define sendNoArgs(i, f) objc_msgSend(i, sel_registerName(f))
 #define send(i, f, ...) objc_msgSend(i, sel_registerName(f), __VA_ARGS__)
 #define sendClass(c, f, ...)\
-    objc_msgSend((id)objc_getClass(c), sel_registerName(f), ...)
+    objc_msgSend((id)objc_getClass(c), sel_registerName(f), __VA_ARGS__)
 #define sendClassNoArgs(c, f)\
     objc_msgSend((id)objc_getClass(c), sel_registerName(f))
 #define alloc(c) sendClassNoArgs(c, "alloc")
@@ -50,5 +63,9 @@ typedef uint32_t NSOpenGLPixelFormatAttribute;
     objc_allocateClassPair((Class)objc_getClass(s), n, e)
 #define allocateClassPairNoExtra(s, n)\
     objc_allocateClassPair((Class)objc_getClass(s), n, 0)
+#define makeNSString(c)\
+    send(alloc("NSString"), "initWithUTF8String:", c)
+#define emptyNSString()\
+    makeNSString("")
 
 #endif //UML_VIEWER_01_OBJC_HELPERS_H

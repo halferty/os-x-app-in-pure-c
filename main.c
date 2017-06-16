@@ -4,6 +4,16 @@
 #include <opengl/gl.h>
 #include "objc_helpers.h"
 
+//#include <AppKit/NSOpenGL.h>
+//#include <Foundation/NSGeometry.h>
+//#include <cocoa/cocoa.h>
+//#import <Cocoa/Cocoa.h>
+//#import <OpenGL/gl.h>
+//#import <GLKit/GLKit.h>
+//#include <AppKit/NSRunningApplication.h>
+
+
+
 extern id NSApp;
 
 typedef struct {
@@ -14,28 +24,16 @@ typedef struct {
 NSOpenGLPixelFormatAttribute attrs[] = { NSOpenGLPFADoubleBuffer, 0 };
 
 void prepareOpenGL() {
-//    printf("prepareOpenGL called\n");
     glClearColor(0.7490196078431373f, 0.3568627450980392f, 0.3568627450980392f, 1.0f);
-//    glClearColor(0.7490196078431373f, 0.3568627450980392f, 0.3568627450980392f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glFlush();
     glSwapAPPLE();
 }
 
 void reshape() {
-//    printf("reshape called\n");
-//    glClearColor(0.7490196078431373f, 0.3568627450980392f, 0.3568627450980392f, 1.0f);
-//    glClear(GL_COLOR_BUFFER_BIT);
-//    glFlush();
-    glSwapAPPLE();
 }
 
 void drawRect(CGRect rect) {
-//    printf("drawRect called\n");
-//    glClearColor(0.7490196078431373f, 0.3568627450980392f, 0.3568627450980392f, 1.0f);
-//    glClear(GL_COLOR_BUFFER_BIT);
-//    glFlush();
-    glSwapAPPLE();
 }
 
 bool didFinishLaunching(AppDelegateStruct *self, SEL _cmd, id notification) {
@@ -49,7 +47,6 @@ bool didFinishLaunching(AppDelegateStruct *self, SEL _cmd, id notification) {
     addMethod(ViewClass, "prepareOpenGL", (IMP)prepareOpenGL, "v@");
     addMethod(ViewClass, "reshape", (IMP)reshape, "v@");
     addMethod(ViewClass, "drawRect:", (IMP)drawRect, "v@:@");
-//    printf("%p\n", (void *)ViewClass);
     objc_registerClassPair(ViewClass);
     id pixelFormat = send(alloc("NSOpenGLPixelFormat"), "initWithAttributes:", attrs);
     id context = send(alloc("NSOpenGLContext"), "initWithFormat:shareContext:", pixelFormat, (void *)0);
@@ -58,17 +55,45 @@ bool didFinishLaunching(AppDelegateStruct *self, SEL _cmd, id notification) {
     send(view, "setPixelFormat:", pixelFormat);
     send(view, "setOpenGLContext:", context);
     send(self->window, "setContentView:", view);
-//    send(NSApp, "activateIgnoringOtherApps", true);
-//    send(self->window, "makeKeyAndOrderFront:", self);
-    id window = send(sendNoArgs(NSApp, "windows"), "objectAtIndex:", 0);
-    send(window, "makeKeyAndOrderFront:", window);
-//    send(window, "activateIgnoringOtherApps:", true);
-//    id first = send(asdf, "objectAtIndex:", 0);
-//    id app = sendClassNoArgs("NSApplication", "sharedApplication");
-//    auto mainWindow = sendNoArgs(app, "mainWindow");
-//    int asdfdf = 23423;
-//    send(self->window, "makeKeyAndOrderFront:", self);
-//    send(self->window, "makeKeyAndOrderFront:", self->window);
+    send(self->window, "makeKeyAndOrderFront:", NSApp);
+
+//    id mainMenu = initAlloc("NSMenu");
+//
+////    newItem = [[NSMenuItem allocWithZone:[NSMenu menuZone]] initWithTitle:@"Flashy" action:NULL keyEquivalent:@""];
+//    id newItem = send(sendClass("NSMenuItem", "allocWithZone:", sendClassNoArgs("NSMenu", "menuZone")), "initWithTitle:action:keyEquivalent:", makeNSString("Asdf"), NULL, emptyNSString());
+//
+////    newMenu = [[NSMenu allocWithZone:[NSMenu menuZone]] initWithTitle:@"Flashy"];
+//    id newMenu = send(sendClass("NSMenu", "allocWithZone:", sendClassNoArgs("NSMenu", "menuZone")), "initWithTitle:", makeNSString("Asdf"));
+//
+////    [newItem setSubmenu:newMenu];
+//    send(newItem, "setSubmenu:", newMenu);
+//
+////    [newMenu release];
+//    sendNoArgs(newMenu, "release");
+//
+////    [[NSApp mainMenu] addItem:newItem];
+//    send(mainMenu, "addItem:", newItem);
+//
+////    [newItem release];
+//    sendNoArgs(newItem, "release");
+//
+//    send(NSApp, "setMainMenu:", mainMenu);
+
+    //[NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+    send(NSApp, "setActivationPolicy:", NSApplicationActivationPolicyRegular);
+
+    //id menubar = [[NSMenu new] autorelease];
+    id menuBar = sendNoArgs(sendClassNoArgs("NSMenu", "new"), "autorelease");
+
+    //id appMenuItem = [[NSMenuItem new] autorelease];
+    id appMenuItem = sendNoArgs(sendClassNoArgs("NSMenuItem", "new"), "autorelease");
+
+    //[menubar addItem:appMenuItem];
+    send(menuBar, "addItem:", appMenuItem);
+
+    //[NSApp setMainMenu:menubar];
+    send(NSApp, "setMainMenu:", menuBar);
+
     return YES;
 }
 
@@ -88,8 +113,3 @@ int main(int argc, char **argv) {
     sendNoArgs(NSApp, "run");
     return EXIT_SUCCESS;
 }
-
-
-//- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication {
-//    return YES;
-//}
