@@ -67,5 +67,11 @@ typedef NS_ENUM(NSInteger, NSApplicationActivationPolicy) {
     send(alloc("NSString"), "initWithUTF8String:", c)
 #define emptyNSString()\
     makeNSString("")
+#define new(c)\
+    sendClassNoArgs(c, "new")
+#define autorelease(i)\
+    sendNoArgs(i, "autorelease")
+#define autoreleaseNew(c)\
+    autorelease(new(c))
 
 #endif //UML_VIEWER_01_OBJC_HELPERS_H

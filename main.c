@@ -79,20 +79,7 @@ bool didFinishLaunching(AppDelegateStruct *self, SEL _cmd, id notification) {
 //
 //    send(NSApp, "setMainMenu:", mainMenu);
 
-    //[NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
-    send(NSApp, "setActivationPolicy:", NSApplicationActivationPolicyRegular);
 
-    //id menubar = [[NSMenu new] autorelease];
-    id menuBar = sendNoArgs(sendClassNoArgs("NSMenu", "new"), "autorelease");
-
-    //id appMenuItem = [[NSMenuItem new] autorelease];
-    id appMenuItem = sendNoArgs(sendClassNoArgs("NSMenuItem", "new"), "autorelease");
-
-    //[menubar addItem:appMenuItem];
-    send(menuBar, "addItem:", appMenuItem);
-
-    //[NSApp setMainMenu:menubar];
-    send(NSApp, "setMainMenu:", menuBar);
 
     return YES;
 }
@@ -108,6 +95,32 @@ int main(int argc, char **argv) {
     addMethod(AppDelegateClass, "applicationShouldTerminateAfterLastWindowClosed:", (IMP)shouldTerminateAfterLastWindowClosed, "i@:@");
     objc_registerClassPair(AppDelegateClass);
     sendClassNoArgs("NSApplication", "sharedApplication");
+
+    //[NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+    send(NSApp, "setActivationPolicy:", NSApplicationActivationPolicyRegular);
+    //id menubar = [[NSMenu new] autorelease];
+    id menuBar = autoreleaseNew("NSMenu");//sendNoArgs(sendClassNoArgs("NSMenu", "new"), "autorelease");
+    //id appMenuItem = [[NSMenuItem new] autorelease];
+    id appMenuItem = autoreleaseNew("NSMenuItem");
+    //[menubar addItem:appMenuItem];
+    send(menuBar, "addItem:", appMenuItem);
+//    id newMenu = send(sendClass("NSMenu", "allocWithZone:", sendClassNoArgs("NSMenu", "menuZone")), "initWithTitle:", makeNSString("Asdf"));
+//    send(menuBar, "addItem:", appMenuItem);
+    //[NSApp setMainMenu:menubar];
+    send(NSApp, "setMainMenu:", menuBar);
+//    id appMenu = [[NSMenu new] autorelease];
+    id appMenu = autoreleaseNew("NSMenu");
+//    id appName = [[NSProcessInfo processInfo] processName];
+    id appName = sendNoArgs(sendClassNoArgs("NSProcessInfo", "processInfo"), "processName");
+//    id quitTitle = [@"Quit " stringByAppendingString:appName];
+    id quitTitle = send(makeNSString("Quit"), "stringByAppendingString:", appName);
+//    id quitMenuItem = [[[NSMenuItem alloc] initWithTitle:quitTitle action:@selector(terminate:) keyEquivalent:@"q"] autorelease];
+    id quitMenuItem = autorelease(send(alloc("NSMenuItem"), "initWithTitle:action:keyEquivalent:", quitTitle, NULL, makeNSString("q")));
+//    [appMenu addItem:quitMenuItem];
+    send(appMenu, "addItem:", quitMenuItem);
+//    [appMenuItem setSubmenu:appMenu];
+    send(appMenuItem, "setSubmenu:", appMenu);
+
     id appDelegate = initAlloc(appDelegateClassName);
     send(NSApp, "setDelegate:", appDelegate);
     sendNoArgs(NSApp, "run");
