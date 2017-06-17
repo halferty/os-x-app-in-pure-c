@@ -81,6 +81,8 @@ FOUNDATION_EXPORT SEL NSSelectorFromString(id aSelectorName);
 #define autoreleaseNew(c)\
     autorelease(new(c))
 #define selector(s)\
-    sendClass("NSSelectorFromString")
+    NSSelectorFromString(makeNSString(s))
+#define registerSelector(name)\
+    sel_registerName(name)
 
 #endif //UML_VIEWER_01_OBJC_HELPERS_H

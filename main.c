@@ -4,16 +4,6 @@
 #include <opengl/gl.h>
 #include "objc_helpers.h"
 
-//#include <AppKit/NSOpenGL.h>
-//#include <Foundation/NSGeometry.h>
-//#include <cocoa/cocoa.h>
-//#import <Cocoa/Cocoa.h>
-//#import <OpenGL/gl.h>
-//#import <GLKit/GLKit.h>
-//#include <AppKit/NSRunningApplication.h>
-
-
-
 extern id NSApp;
 
 typedef struct {
@@ -56,31 +46,6 @@ bool didFinishLaunching(AppDelegateStruct *self, SEL _cmd, id notification) {
     send(view, "setOpenGLContext:", context);
     send(self->window, "setContentView:", view);
     send(self->window, "makeKeyAndOrderFront:", NSApp);
-
-//    id mainMenu = initAlloc("NSMenu");
-//
-////    newItem = [[NSMenuItem allocWithZone:[NSMenu menuZone]] initWithTitle:@"Flashy" action:NULL keyEquivalent:@""];
-//    id newItem = send(sendClass("NSMenuItem", "allocWithZone:", sendClassNoArgs("NSMenu", "menuZone")), "initWithTitle:action:keyEquivalent:", makeNSString("Asdf"), NULL, emptyNSString());
-//
-////    newMenu = [[NSMenu allocWithZone:[NSMenu menuZone]] initWithTitle:@"Flashy"];
-//    id newMenu = send(sendClass("NSMenu", "allocWithZone:", sendClassNoArgs("NSMenu", "menuZone")), "initWithTitle:", makeNSString("Asdf"));
-//
-////    [newItem setSubmenu:newMenu];
-//    send(newItem, "setSubmenu:", newMenu);
-//
-////    [newMenu release];
-//    sendNoArgs(newMenu, "release");
-//
-////    [[NSApp mainMenu] addItem:newItem];
-//    send(mainMenu, "addItem:", newItem);
-//
-////    [newItem release];
-//    sendNoArgs(newItem, "release");
-//
-//    send(NSApp, "setMainMenu:", mainMenu);
-
-
-
     return YES;
 }
 
@@ -88,42 +53,31 @@ bool shouldTerminateAfterLastWindowClosed(AppDelegateStruct *self, SEL _cmd, id 
     return YES;
 }
 
+void doStuff() {
+    auto asdf = 234234;
+}
+
 int main(int argc, char **argv) {
     const char *appDelegateClassName = "AppDelegate";
     Class AppDelegateClass = allocateClassPairNoExtra("NSObject", appDelegateClassName);
     addMethod(AppDelegateClass, "applicationDidFinishLaunching:", (IMP)didFinishLaunching, "i@:@");
     addMethod(AppDelegateClass, "applicationShouldTerminateAfterLastWindowClosed:", (IMP)shouldTerminateAfterLastWindowClosed, "i@:@");
+    addMethod(AppDelegateClass, "doStuff", (IMP)doStuff, "v@:@");
     objc_registerClassPair(AppDelegateClass);
     sendClassNoArgs("NSApplication", "sharedApplication");
-
-    //[NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
     send(NSApp, "setActivationPolicy:", NSApplicationActivationPolicyRegular);
-    //id menubar = [[NSMenu new] autorelease];
-    id menuBar = autoreleaseNew("NSMenu");//sendNoArgs(sendClassNoArgs("NSMenu", "new"), "autorelease");
-    //id appMenuItem = [[NSMenuItem new] autorelease];
+    id menuBar = autoreleaseNew("NSMenu");
     id appMenuItem = autoreleaseNew("NSMenuItem");
-    //[menubar addItem:appMenuItem];
     send(menuBar, "addItem:", appMenuItem);
-//    id newMenu = send(sendClass("NSMenu", "allocWithZone:", sendClassNoArgs("NSMenu", "menuZone")), "initWithTitle:", makeNSString("Asdf"));
-//    send(menuBar, "addItem:", appMenuItem);
-    //[NSApp setMainMenu:menubar];
     send(NSApp, "setMainMenu:", menuBar);
-//    id appMenu = [[NSMenu new] autorelease];
     id appMenu = autoreleaseNew("NSMenu");
-//    id appName = [[NSProcessInfo processInfo] processName];
     id appName = sendNoArgs(sendClassNoArgs("NSProcessInfo", "processInfo"), "processName");
-//    id quitTitle = [@"Quit " stringByAppendingString:appName];
     id quitTitle = send(makeNSString("Quit "), "stringByAppendingString:", appName);
-//    id quitMenuItem = [[[NSMenuItem alloc] initWithTitle:quitTitle action:@selector(terminate:) keyEquivalent:@"q"] autorelease];
-    id quitMenuItem = autorelease(send(alloc("NSMenuItem"), "initWithTitle:action:keyEquivalent:", quitTitle, NSSelectorFromString(makeNSString("terminate:")), makeNSString("q")));
+    id quitMenuItem = autorelease(send(alloc("NSMenuItem"), "initWithTitle:action:keyEquivalent:", quitTitle, selector("terminate:"), makeNSString("q")));
     id menuTitle = makeNSString("Menu example");
-    id menuItem = autorelease(send(alloc("NSMenuItem"), "initWithTitle:action:keyEquivalent:", menuTitle, NULL, makeNSString("m")));
-//    [appMenu addItem:quitMenuItem];
-    send(quitMenuItem, "setEnabled:", true);
-    send(appMenu, "addItem:", quitMenuItem);
-    send(menuItem, "setEnabled:", true);
+    id menuItem = autorelease(send(alloc("NSMenuItem"), "initWithTitle:action:keyEquivalent:", menuTitle, registerSelector("doStuff"), makeNSString("m")));
     send(appMenu, "addItem:", menuItem);
-//    [appMenuItem setSubmenu:appMenu];
+    send(appMenu, "addItem:", quitMenuItem);
     send(appMenuItem, "setSubmenu:", appMenu);
     send(NSApp, "activateIgnoringOtherApps:", true);
     id appDelegate = initAlloc(appDelegateClassName);
